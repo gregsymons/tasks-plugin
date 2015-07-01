@@ -4,14 +4,17 @@ import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.HealthAwarePublisher;
 import hudson.plugins.analysis.util.PluginLogger;
@@ -29,20 +32,22 @@ public class TasksPublisher extends HealthAwarePublisher {
 
     /** Default files pattern. */
     private static final String DEFAULT_PATTERN = "**/*.java";
+    public static final String PLUGIN_NAME = "TASKS";
     /** Tag identifiers indicating high priority. */
-    private final String high;
+    private String high = "BUG,FIXME";
     /** Tag identifiers indicating normal priority. */
-    private final String normal;
+    private String normal = "TODO";
     /** Tag identifiers indicating low priority. */
-    private final String low;
+    private String low = StringUtils.EMPTY;
     /** Tag identifiers indicating case sensitivity. */
-    private final boolean ignoreCase;
+    private boolean ignoreCase;
+
     /** If the identifiers should be treated as regular expression. */
-    private final boolean asRegexp;
+    private boolean asRegexp;
     /** Ant file-set pattern of files to work with. */
-    private final String pattern;
+    private String pattern = DEFAULT_PATTERN;
     /** Ant file-set pattern of files to exclude from work. */
-    private final String excludePattern;
+    private String excludePattern = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of <code>TasksPublisher</code>.
@@ -122,7 +127,6 @@ public class TasksPublisher extends HealthAwarePublisher {
      */
     // CHECKSTYLE:OFF
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    @DataBoundConstructor
     public TasksPublisher(final String healthy, final String unHealthy, final String thresholdLimit,
             final String defaultEncoding, final boolean useDeltaValues,
             final String unstableTotalAll, final String unstableTotalHigh, final String unstableTotalNormal, final String unstableTotalLow,
@@ -138,7 +142,7 @@ public class TasksPublisher extends HealthAwarePublisher {
                 failedTotalAll, failedTotalHigh, failedTotalNormal, failedTotalLow,
                 failedNewAll, failedNewHigh, failedNewNormal, failedNewLow,
                 canRunOnFailed, usePreviousBuildAsReference, useStableBuildAsReference,
-                shouldDetectModules, canComputeNew, true, "TASKS");
+                shouldDetectModules, canComputeNew, true, PLUGIN_NAME);
         this.pattern = pattern;
         this.excludePattern = excludePattern;
         this.high = high;
@@ -148,6 +152,46 @@ public class TasksPublisher extends HealthAwarePublisher {
         this.asRegexp = asRegexp;
     }
     // CHECKSTYLE:ON
+    @DataBoundConstructor
+    public TasksPublisher() {
+        super(PLUGIN_NAME);
+        setCanResolveRelativePaths(true);
+    }
+
+    @DataBoundSetter
+    public void setHigh(final String high) {
+        this.high = high;
+    }
+
+    @DataBoundSetter
+    public void setNormal(final String normal) {
+        this.normal = normal;
+    }
+
+    @DataBoundSetter
+    public void setLow(final String low) {
+        this.low = low;
+    }
+
+    @DataBoundSetter
+    public void setIgnoreCase(final boolean ignoreCase) {
+        this.ignoreCase = ignoreCase;
+    }
+
+    @DataBoundSetter
+    public void setAsRegexp(final boolean asRegexp) {
+        this.asRegexp = asRegexp;
+    }
+
+    @DataBoundSetter
+    public void setPattern(final String pattern) {
+        this.pattern = pattern;
+    }
+
+    @DataBoundSetter
+    public void setExcludePattern(final String excludePattern) {
+        this.excludePattern = excludePattern;
+    }
 
     /**
      * Returns the Ant file-set pattern of files to work with.
@@ -218,11 +262,11 @@ public class TasksPublisher extends HealthAwarePublisher {
     }
 
     @Override
-    protected BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
+    protected BuildResult perform(final Run<?, ?> build, final FilePath workspace, final TaskListener listener, final PluginLogger logger) throws InterruptedException, IOException {
         TasksParserResult project;
         WorkspaceScanner scanner = new WorkspaceScanner(StringUtils.defaultIfEmpty(getPattern(), DEFAULT_PATTERN),
                 getExcludePattern(), getDefaultEncoding(), high, normal, low, ignoreCase, shouldDetectModules(), asRegexp);
-        project = build.getWorkspace().act(scanner);
+        project = workspace.act(scanner);
 
         logger.logLines(project.getLogMessages());
         logger.log(String.format("Found %d open tasks.", project.getNumberOfAnnotations()));

@@ -1,6 +1,7 @@
 package hudson.plugins.tasks;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.views.DetailFactory;
 import hudson.plugins.analysis.views.FixedWarningsDetail;
@@ -28,7 +29,7 @@ public class FixedTasksDetail extends FixedWarningsDetail {
      * @param header
      *            header to be shown on detail page
      */
-    public FixedTasksDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> fixedTasks, final String defaultEncoding, final String header) {
+    public FixedTasksDetail(final Run<?, ?> owner, final Collection<FileAnnotation> fixedTasks, final String defaultEncoding, final String header) {
         super(owner, new DetailFactory(), fixedTasks, defaultEncoding, header);
     }
 

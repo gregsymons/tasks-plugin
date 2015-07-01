@@ -1,6 +1,7 @@
 package hudson.plugins.tasks;
 
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.AbstractProjectAction;
 
@@ -29,7 +30,7 @@ public class TasksProjectAction extends AbstractProjectAction<ResultAction<Tasks
      * @param type
      *            the result action type
      */
-    public TasksProjectAction(final AbstractProject<?, ?> project,
+    public TasksProjectAction(final Job<?, ?> project,
             final Class<? extends ResultAction<TasksResult>> type) {
         super(project, type, Messages._Tasks_ProjectAction_Name(), Messages._Tasks_Trend_Name(),
                 TasksDescriptor.PLUGIN_ID, TasksDescriptor.ICON_URL, TasksDescriptor.RESULT_URL);

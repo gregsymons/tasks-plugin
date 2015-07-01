@@ -1,6 +1,7 @@
 package hudson.plugins.tasks;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.views.DetailFactory;
 import hudson.plugins.analysis.views.TabDetail;
@@ -28,7 +29,7 @@ public class TasksTabDetail extends TabDetail {
      * @param defaultEncoding
      *            the default encoding to be used when reading and parsing files
      */
-    public TasksTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
+    public TasksTabDetail(final Run<?, ?> owner, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
         super(owner, new DetailFactory(), annotations, url, defaultEncoding);
     }
 

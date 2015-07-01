@@ -1,6 +1,7 @@
 package hudson.plugins.tasks;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.core.ResultAction;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.tasks.parser.TasksParserResult;
@@ -34,7 +35,7 @@ public class TasksReporterResult extends TasksResult {
      * @param lowTags
      *            tag identifiers indicating low priority
      */
-    public TasksReporterResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final TasksParserResult result,
+    public TasksReporterResult(final Run<?, ?> build, final String defaultEncoding, final TasksParserResult result,
             final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference,
             final String highTags, final String normalTags, final String lowTags) {
         super(build, defaultEncoding, result, usePreviousBuildAsReference, useStableBuildAsReference,

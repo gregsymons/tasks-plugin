@@ -1,6 +1,13 @@
 package hudson.plugins.tasks;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import jenkins.tasks.SimpleBuildStep;
+
 import hudson.model.AbstractBuild;
+import hudson.model.Action;
+import hudson.model.Run;
 import hudson.plugins.analysis.core.HealthDescriptor;
 import hudson.plugins.analysis.core.PluginDescriptor;
 import hudson.plugins.analysis.core.AbstractResultAction;
@@ -16,7 +23,7 @@ import hudson.plugins.analysis.core.AbstractResultAction;
  *
  * @author Ulli Hafner
  */
-public class TasksResultAction extends AbstractResultAction<TasksResult>  {
+public class TasksResultAction extends AbstractResultAction<TasksResult> implements SimpleBuildStep.LastBuildAction {
     /**
      * Creates a new instance of <code>TasksResultAction</code>.
      *
@@ -27,7 +34,7 @@ public class TasksResultAction extends AbstractResultAction<TasksResult>  {
      * @param result
      *            the result in this build
      */
-    public TasksResultAction(final AbstractBuild<?, ?> owner, final HealthDescriptor healthDescriptor, final TasksResult result) {
+    public TasksResultAction(final Run<?, ?> owner, final HealthDescriptor healthDescriptor, final TasksResult result) {
         super(owner, new TasksHealthDescriptor(healthDescriptor), result);
     }
 
@@ -49,5 +56,10 @@ public class TasksResultAction extends AbstractResultAction<TasksResult>  {
     @Override
     public String getSingleItemTooltip() {
         return Messages.Tasks_ResultAction_OneWarning();
+    }
+
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return Collections.singleton(new TasksProjectAction(getOwner().getParent(), TasksResultAction.class));
     }
 }

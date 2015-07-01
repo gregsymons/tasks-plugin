@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import com.thoughtworks.xstream.XStream;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.core.BuildHistory;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.ResultAction;
@@ -51,7 +52,7 @@ public class TasksResult extends BuildResult {
      * @param lowTags
      *            tag identifiers indicating low priority
      */
-    public TasksResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final TasksParserResult result,
+    public TasksResult(final Run<?, ?> build, final String defaultEncoding, final TasksParserResult result,
             final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference,
             final String highTags, final String normalTags, final String lowTags) {
         this(build, defaultEncoding, result, usePreviousBuildAsReference, useStableBuildAsReference,
@@ -82,7 +83,7 @@ public class TasksResult extends BuildResult {
      *            the type of the result action
      */
     // CHECKSTYLE:OFF
-    protected TasksResult(final AbstractBuild<?, ?> build, final String defaultEncoding, final TasksParserResult result,
+    protected TasksResult(final Run<?, ?> build, final String defaultEncoding, final TasksParserResult result,
             final boolean usePreviousBuildAsReference, final boolean useStableBuildAsReference,
             final String highTags, final String normalTags, final String lowTags,
             final Class<? extends ResultAction<TasksResult>> actionType) {

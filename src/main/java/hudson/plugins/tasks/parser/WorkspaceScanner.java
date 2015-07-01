@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.types.FileSet;
+import org.jenkinsci.remoting.RoleChecker;
 
 import hudson.FilePath;
 import hudson.FilePath.FileCallable;
@@ -244,7 +245,7 @@ public class WorkspaceScanner implements FileCallable<TasksParserResult> {
         return result;
     }
 
-    private InputStreamReader readFile(final File originalFile) throws IOException {
+    private InputStreamReader readFile(final File originalFile) throws IOException, InterruptedException {
         return new InputStreamReader(new FilePath(originalFile).read(),
                     EncodingValidator.defaultCharset(defaultEncoding));
     }
@@ -282,5 +283,10 @@ public class WorkspaceScanner implements FileCallable<TasksParserResult> {
                 + "' - excludes: " + excludeFilePattern);
 
         return fileSet.getDirectoryScanner(project).getIncludedFiles();
+    }
+
+    @Override
+    public void checkRoles(final RoleChecker checker) throws SecurityException {
+        //We have no roles to check?
     }
 }
